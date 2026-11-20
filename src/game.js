@@ -8,7 +8,7 @@ const DEFAULTS = {
   destekSec: 30, ropeCap: 8,
   musicVol: 0.6, drumOn: true, drumVol: 0.35, sfxVol: 0.8,
   todMode: 'cycle', todMin: 12, slowMin: 15, fastMin: 10, interact: 1,
-  idleMin: 15, shotSec: 9, quality: 'high', labelScale: 1, hudScale: 1, hudTop: 0,
+  idleMin: 15, shotSec: 9, quality: 'high', labelScale: 1.3, hudScale: 1, hudTop: 0,
   showLedger: true, showStats: true, hideBtn: false, wakeLock: true,
   demoOn: false, demoRate: '1', demoGifts: true,
 };
