@@ -728,7 +728,7 @@ function updateCamera(dt) {
     case 'on': camAt(bowOff + ropeLen + 18 * K - k * 6, 6.5 * sg, 4.2, tgtPos); camAt(2, 0, 4, tgtLook); break;
     case 'kus': camAt(-4 + k * 8, 14 * Math.sin(k * 1.2 + sd * 3), (34 - k * 6) * K, tgtPos); camAt(ropeLen * 0.4, 0, 0, tgtLook); break;
     case 'halat': camAt(bowOff + ropeLen + 4 - k * 1.5, 6.8 * sg * K, 3.6 + k * 0.6, tgtPos); camAt(bowOff + ropeLen * 0.3, 0, 2.2, tgtLook); break;
-    case 'gemi': camAt(9.6 - k * 1.5, 0.3 * sg, 6.0, tgtPos); camAt(bowOff + ropeLen + 12, 0, 2.2, tgtLook); break;
+    case 'gemi': camAt(7.5 - k * 1.5, 1.4 * sg, 8.2, tgtPos); camAt(bowOff + ropeLen + 12, 0, 2.2, tgtLook); break;
     case 'genis': camAt(-34 + k * 18, (52 + sd * 16) * K, (14 + k * 6) * K, tgtPos); camAt(4, -40, 6, tgtLook); break;
     case 'fatih': camAt(bowOff + ropeLen + 13 - k * 2, 5.5 * sg, 3.2, tgtPos); camAt(bowOff + ropeLen + 6, 0, 3.4, tgtLook); break;
     case 'orbit': { const a = sd * 6 + k * 1.4; camAt(Math.cos(a) * 28 * K, Math.abs(Math.sin(a)) * 28 * K + 4, 10 * K, tgtPos); camAt(0, 0, 3, tgtLook); break; }
