@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fetih Hikayesi">
+<meta name="theme-color" content="#120c08">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-512.png">
+<link rel="icon" href="icon-512.png">
+<title>FETİH HİKAYESİ</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div id="stage"></div>
+
+<div id="hud">
+  <div id="top">
+    <div id="title">FETİH HİKAYESİ</div>
+    <div id="seferLbl">SEFER 1</div>
+    <div id="road">
+      <span class="end">BOĞAZ</span>
+      <div id="bar"><div id="barFill"></div><div id="barShip">⛵</div><div id="barTxt">Haliç'e 1.453 m</div></div>
+      <span class="end">HALİÇ</span>
+    </div>
+  </div>
+  <div id="ledger" class="panel">
+    <div class="ph">SEFER DEFTERİ</div>
+    <div id="ledgerRows"></div>
+  </div>
+  <div id="stats" class="panel">
+    <div class="st"><span class="k">FATİH</span><span class="v" id="stFatih">—</span></div>
+    <div class="st"><span class="k">DESTEK 1,5 kat</span><span class="v" id="stDestek">—</span></div>
+    <div class="st"><span class="k">HALATTA</span><span class="v" id="stHalat">0</span></div>
+    <div class="st"><span class="k">TAYFA</span><span class="v" id="stTayfa">0</span></div>
+  </div>
+  <div id="bigCard"></div>
+  <div id="cards"></div>
+  <div id="cta">Yorum yaz, tayfaya katıl</div>
+  <div id="finale">
+    <div class="fh">Seferin yiğitleri</div>
+    <div id="finaleSub"></div>
+    <div id="finaleRows"></div>
+    <div id="finaleNext"></div>
+  </div>
+</div>
+
+<button id="menuBtn" aria-label="Menü">⚙</button>
+
+<div id="start">
+  <div class="sbox">
+    <div class="st1">FETİH HİKAYESİ</div>
+    <div class="st2">1453 · Galata'dan Haliç'e</div>
+    <button id="startBtn">Başlat</button>
+    <div class="st3">Menü: sağ alttaki ⚙ düğmesi ya da klavyede Esc.<br>iPhone'da tam ekran için: Safari → Paylaş → <b>Ana Ekrana Ekle</b>, sonra simgeden aç.</div>
+  </div>
+</div>
+
+<div id="menu" class="hidden">
+  <div class="mbox">
+    <div class="mhead"><b>FETİH HİKAYESİ · Menü</b><button id="menuClose">Kapat ✕</button></div>
+    <div class="tabs">
+      <button data-tab="baglanti" class="on">Bağlantı</button>
+      <button data-tab="hediye">Hediyeler</button>
+      <button data-tab="muzik">Müzik</button>
+      <button data-tab="ayar">Ayarlar</button>
+      <button data-tab="test">Test</button>
+    </div>
+    <div class="tab on" id="tab-baglanti">
+      <label>TikTok kullanıcı adın<input id="ttUser" placeholder="@kullaniciadi" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
+      <div class="row"><button id="ttConnect" class="pri">Bağlan</button><button id="ttDisconnect">Bağlantıyı kes</button></div>
+      <div id="ttStatus" class="status">Bağlı değil</div>
+      <div id="ttViewers" class="muted"></div>
+      <label class="chk"><input type="checkbox" id="autoConnect"> Açılışta otomatik bağlan</label>
+      <p class="muted">Önce TikTok'ta canlı yayını başlat, sonra burada Bağlan'a bas. Yorumlar, beğeniler, takipler ve atadığın hediyeler oyuna akar.</p>
+      <details><summary>Gelişmiş</summary>
+        <label>Aktarıcı sunucu adresi (boş = bu site)<input id="serverUrl" placeholder="https://..." autocapitalize="off" autocorrect="off" spellcheck="false"></label>
+        <label>Euler Stream API anahtarı (isteğe bağlı)<input id="signKey" placeholder="boş bırakılabilir" autocapitalize="off" autocorrect="off" spellcheck="false"></label>
+      </details>
+    </div>
+    <div class="tab" id="tab-hediye">
+      <p class="muted">Hediyeler yalnızca burada bir eyleme atarsan çalışır. Hediye adını (ör. Rose, Finger Heart) veya hediye numarasını yaz; birden fazlaysa virgülle ayır.</p>
+      <div class="gift"><b>Halatı çek</b><span class="muted">Gönderen adıyla halata asılır.</span><input id="g_halat" placeholder="ör. Rose"><select data-for="g_halat" class="gsel"></select></div>
+      <div class="gift"><b>Fatih ol</b><span class="muted">Gönderen önde beyaz atla yürür.</span><input id="g_fatih" placeholder="ör. Hand Hearts"><select data-for="g_fatih" class="gsel"></select></div>
+      <div class="gift"><b>Destekle</b><span class="muted">Gemi bir süre 1,5 kat hızlı gider.</span><input id="g_destek" placeholder="ör. Finger Heart"><select data-for="g_destek" class="gsel"></select></div>
+      <div class="row2"><label>Destek süresi (sn)<input type="number" id="destekSec" min="5" max="300"></label><label>Halat kapasitesi<input type="number" id="ropeCap" min="2" max="16"></label></div>
+      <div class="ph2">Son gelen hediyeler</div>
+      <div id="recentGifts" class="muted">Henüz hediye gelmedi.</div>
+    </div>
+    <div class="tab" id="tab-muzik">
+      <label>Kendi MP3 müziğin<input type="file" id="mp3" accept="audio/mpeg,audio/mp3,.mp3,audio/*"></label>
+      <div id="mp3Name" class="muted">Müzik yüklenmedi</div>
+      <div class="row"><button id="mPlay">Çal / Duraklat</button><button id="mRemove">Müziği kaldır</button></div>
+      <label>Müzik sesi<input type="range" id="musicVol" min="0" max="1" step="0.01"></label>
+      <label class="chk"><input type="checkbox" id="drumOn"> Yürüyüş davulu</label>
+      <label>Davul sesi<input type="range" id="drumVol" min="0" max="1" step="0.01"></label>
+      <label>Efekt sesi (top selamı)<input type="range" id="sfxVol" min="0" max="1" step="0.01"></label>
+    </div>
+    <div class="tab" id="tab-ayar">
+      <div class="row2">
+        <label>Gün ışığı<select id="todMode"><option value="cycle">Döngü (gündüz → gün batımı → akşam → gece)</option><option value="day">Gündüz</option><option value="sunset">Gün batımı</option><option value="evening">Akşam</option><option value="night">Gece</option></select></label>
+        <label>Döngü süresi (dk)<input type="number" id="todMin" min="2" max="60"></label>
+      </div>
+      <div class="row2">
+        <label>Kimse yokken sefer süresi (dk)<input type="number" id="slowMin" min="3" max="40"></label>
+        <label>Kalabalıkla en kısa süre (dk)<input type="number" id="fastMin" min="2" max="40"></label>
+      </div>
+      <label>Etkileşim gücü (yorum/beğeni/takip itişi)<input type="range" id="interact" min="0" max="2" step="0.05"></label>
+      <div class="row2">
+        <label>Tayfadan düşme (dk sessizlik, 0 = hiç)<input type="number" id="idleMin" min="0" max="120"></label>
+        <label>Kamera planı süresi (sn)<input type="number" id="shotSec" min="4" max="30"></label>
+      </div>
+      <div class="row2">
+        <label>Görüntü kalitesi<select id="quality"><option value="low">Düşük</option><option value="mid">Orta</option><option value="high">Yüksek</option></select></label>
+        <label>İsim etiketi boyutu<input type="range" id="labelScale" min="0.6" max="2" step="0.05"></label>
+      </div>
+      <div class="row2">
+        <label>Yazı/panel ölçeği<input type="range" id="hudScale" min="0.6" max="1.6" step="0.05"></label>
+        <label>Üst boşluk (px)<input type="number" id="hudTop" min="0" max="300"></label>
+      </div>
+      <label class="chk"><input type="checkbox" id="showLedger"> Sefer defterini göster</label>
+      <label class="chk"><input type="checkbox" id="showStats"> Sağ sayaçları göster</label>
+      <label class="chk"><input type="checkbox" id="hideBtn"> Menü düğmesini gizle (ekrana hızlıca 3 kez dokununca açılır)</label>
+      <label class="chk"><input type="checkbox" id="wakeLock"> Ekranı açık tut</label>
+      <div class="row"><button id="resetSefer">Seferi baştan başlat</button><button id="resetAll">Ayarları sıfırla</button></div>
+    </div>
+    <div class="tab" id="tab-test">
+      <label class="chk"><input type="checkbox" id="demoOn"> Demo modu (sahte izleyiciler yorum, beğeni, takip gönderir)</label>
+      <label>Demo yoğunluğu<select id="demoRate"><option value="0.5">Az</option><option value="1">Orta</option><option value="2.5">Çok</option></select></label>
+      <label class="chk"><input type="checkbox" id="demoGifts"> Demo hediyeleri de gönderilsin (atanan eylemleri dener)</label>
+      <div class="grid">
+        <button data-t="chat">+ Yorum</button><button data-t="like">+ Beğeni</button><button data-t="follow">+ Takip</button>
+        <button data-t="halat">Halatı çek</button><button data-t="fatih">Fatih ol</button><button data-t="destek">Destekle</button>
+        <button data-t="finish">Seferi bitir</button><button data-t="crowd">+10 tayfa</button><button data-t="shot">Sonraki kamera</button>
+      </div>
+      <p class="muted">Test düğmeleri yalnızca senin ekranında çalışır; gerçek yayına bağlıyken de denemek için kullanılabilir.</p>
+    </div>
+  </div>
+</div>
+<script type="module" src="game.js"></script>
+</body>
+</html>

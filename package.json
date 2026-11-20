@@ -1,0 +1,18 @@
+{
+  "name": "fetih-hikayesi",
+  "version": "1.0.0",
+  "description": "FETİH HİKAYESİ — TikTok LIVE etkileşimli tarayıcı oyunu + aktarıcı sunucu",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "build:client": "esbuild src/game.js --bundle --minify --format=esm --target=es2020,safari15 --outfile=public/game.js"
+  },
+  "engines": { "node": ">=20" },
+  "dependencies": {
+    "compression": "^1.8.1",
+    "express": "^5.1.0",
+    "tiktok-live-connector": "^2.5.0",
+    "ws": "^8.18.3"
+  }
+}
