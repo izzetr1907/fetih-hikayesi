@@ -73,7 +73,9 @@ wss.on('connection', (ws) => {
     await stop();
     const username = String(msg.username || '').trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?tiktok\.com\/@/, '').split(/[/?]/)[0];
     if (!username) return send({ type: 'status', state: 'error', text: 'Kullanıcı adı boş' });
-    const opts = { enableExtendedGiftInfo: true, processInitialData: false };
+    // enableExtendedGiftInfo KAPALI: hediye listesi isteği Euler'in ücretli (Business) imza uç noktasını kullanıyor.
+    // Hediye adı zaten her hediye mesajının içinde geliyor; ücretsiz imza yalnızca WebSocket bağlantısı için kullanılır.
+    const opts = { enableExtendedGiftInfo: false, processInitialData: false };
     const key = (msg.signApiKey || process.env.EULER_API_KEY || '').trim();
     if (key) opts.signApiKey = key;
     send({ type: 'status', state: 'connecting', text: `@${username} yayınına bağlanılıyor…` });
@@ -89,7 +91,7 @@ wss.on('connection', (ws) => {
     c.on(WebcastEvent.GIFT, d => {
       const w = who(d);
       const giftId = String(d.giftId || d.gift?.id || '');
-      const giftName = d.giftDetails?.giftName || d.extendedGiftInfo?.name || d.gift?.name || '';
+      const giftName = d.giftDetails?.giftName || d.gift?.name || d.extendedGiftInfo?.name || d.giftName || '';
       const giftType = Number(d.giftDetails?.giftType ?? d.gift?.type ?? d.extendedGiftInfo?.type ?? 0);
       const repeat = Math.max(1, Number(d.repeatCount || 1));
       let count = repeat;
@@ -114,9 +116,12 @@ wss.on('connection', (ws) => {
       if (conn === c) conn = null;
       const name = e?.constructor?.name || '';
       let text = 'Bağlanamadı: ' + (e?.message || String(e)).slice(0, 160);
-      if (/UserOffline/i.test(name) || /offline|not live|isn't online/i.test(e?.message || '')) text = `@${username} şu anda canlı yayında değil. Önce TikTok LIVE'ı başlat, sonra Bağlan'a bas.`;
+      const em = e?.message || String(e);
+      if (/Business plan|requires a .*plan|PremiumFeature|Purchase one/i.test(name + ' ' + em)) text = 'İmza sunucusu bu isteği ücretli plan gerektirdiği için reddetti. Sunucu güncellendi; sayfayı yenileyip tekrar Bağlan\'a bas. Sorun sürerse Bağlantı → Gelişmiş\'teki Euler API anahtarını silip yeniden dene.';
+      else if (/UserOffline/i.test(name) || /offline|not live|isn't online/i.test(e?.message || '')) text = `@${username} şu anda canlı yayında değil. Önce TikTok LIVE'ı başlat, sonra Bağlan'a bas.`;
       else if (/Room ID|room id|roomId/i.test(e?.message || '')) text = `@${username} için canlı yayın bulunamadı. Yayının açık olduğundan ve kullanıcı adının doğru olduğundan emin ol, sonra tekrar dene.`;
       else if (/RateLimit|429/i.test(name + (e?.message || ''))) text = 'İmza sunucusu sınırına takıldı. Biraz bekleyip tekrar dene ya da Euler Stream API anahtarı gir.';
+      else if (/SignAPI|sign|Signature|401|403|api key|apiKey/i.test(name + ' ' + em)) text = 'Bağlantı imzalanamadı (Euler Stream imza sunucusu). Biraz bekleyip tekrar dene; sürerse eulerstream.com\'dan ücretsiz bir API anahtarı alıp Bağlantı → Gelişmiş\'e yapıştır.';
       send({ type: 'status', state: 'error', text });
     }
   });
